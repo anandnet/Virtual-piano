@@ -1,0 +1,30 @@
+#:kivy 2.0.0
+#:import HomeScreen screens.home
+#:import Loader widgets.loader
+#:import KivyCamera widgets.kivycamera
+Root:
+    orientation:"vertical"               
+
+    #Main WorkSpace
+    BoxLayout:
+        ScreenManager:
+            id:screenmanager
+            HomeScreen:
+                name:"Home"
+                
+    #bottom bar
+    BoxLayout:
+        size_hint_y:None
+        height:"25dp"
+        canvas:
+            Color:
+                rgba:0.5,0.1,1,1
+            Rectangle:
+                pos:self.pos
+                size:self.size
+        MDLabel:
+            halign:"center"
+            text:"Virtual Piano"
+            #theme_text_color:"Primary"
+            color:1,1,1,1
+        
