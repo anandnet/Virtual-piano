@@ -52,6 +52,7 @@ Builder.load_string("""
             InstrumentSelector:
                 text:"Piano"
                 pos_hint:{"center_x":.4,"center_y":.16}
+                source:'assets/icons/piano_white.png' if self.active else 'assets/icons/piano.png'
                 group:"x"
                 active:True
 
