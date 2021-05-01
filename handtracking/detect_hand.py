@@ -4,24 +4,18 @@ import numpy as np
 mp_drawing = solutions.drawing_utils
 mp_hands = solutions.hands
 circle_spec = mp_drawing.DrawingSpec(color=(0, 255, 255), circle_radius=0)
-connection_spec = ''
+connection_spec = mp_drawing.DrawingSpec(color=(0, 255, 255), thickness=8)
+
 # For webcam input:
 hands = mp_hands.Hands(
     min_detection_confidence=0.7, min_tracking_confidence=0.7)
 
 
 def detect_hand(frame):
-    
-
-    # Flip the image horizontally for a later selfie-view display, and convert
-    # the BGR image to RGB.
     image = cv2.cvtColor(cv2.flip(frame, 1), cv2.COLOR_BGR2RGB)
-    # To improve performance, optionally mark the image as not writeable to
-    # pass by reference.
     image.flags.writeable = False
     results = hands.process(image)
 
-    # Draw the hand annotations on the image.
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     blank_image = np.zeros((image.shape[0],image.shape[1],3), np.uint8)
@@ -34,32 +28,11 @@ def detect_hand(frame):
 
             if results.multi_handedness[i].classification[0].label == "Left":
                 left_hand_status = get_finger_status(hand_landmarks.landmark,0)
-            mp_drawing.draw_landmarks(blank_image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+            mp_drawing.draw_landmarks(blank_image, hand_landmarks,landmark_drawing_spec=circle_spec,connection_drawing_spec=connection_spec,connections=mp_hands.HAND_CONNECTIONS)
 
     
     return left_hand_status,right_hand_status,blank_image
 
-
-def get_hands(image, landmark):
-    height, width = image.shape[0], image.shape[1]
-    x_list = []
-    y_list = []
-    for i, each in enumerate(landmark):
-        x_list.append(each.x)
-        y_list.append(each.y)
-    x_min, x_max, y_min, y_max = int(min(x_list)*width)-20, int(
-        max(x_list)*width)+20, int(min(y_list)*height)-20, int(max(y_list)*height)+20
-    #print(x_min, x_max, y_min, y_max)
-    if x_min < 0:
-        x_min = 0
-    if x_max > width:
-        x_max = width
-    if y_min < 0:
-        y_min = 0
-    if y_max > height:
-        y_max = height
-    crop = image[y_min:y_max, x_min:x_max]
-    return crop
 
 
 def get_finger_status(landmark,hnd_index):

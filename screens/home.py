@@ -6,6 +6,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 from kivy.animation import Animation
 from kivy.lang import Builder
+from kivy.uix.behaviors import ToggleButtonBehavior
 from kivymd.uix import boxlayout
 from widgets.kivycamera import KivyCamera
 from utils.constant import clr
@@ -19,6 +20,7 @@ from kivy.properties import (
 from screens.mapping import MusicMapping
 
 Builder.load_string("""
+#:import InstrumentSelector widgets.selector
 <AnimIcon>:
     size_hint:None,None
     height:self.minimum_height
@@ -34,9 +36,7 @@ Builder.load_string("""
         anchor_x:"left"
         BoxLayout:
             id:feed
-           
 
-            #Something
         FloatLayout:
             id:float
             canvas:
@@ -49,12 +49,16 @@ Builder.load_string("""
                 #size_hint_x:1 if root.width<1000  else .8
                 FloatLayout:
                     id:music
-            BoxLayout:
+            InstrumentSelector:
+                text:"Piano"
+                pos_hint:{"center_x":.4,"center_y":.16}
+                group:"x"
+                active:True
 
-            BoxLayout:
-                
-
-
+            InstrumentSelector:
+                text:"Drums"
+                pos_hint:{"center_x":.6,"center_y":.16}
+                group:"x"
 
             MDIconButton:
                 icon:"tools"
@@ -73,7 +77,6 @@ class Camera(KivyCamera):
 
     def on_update(self, frame):
         left_status, right_status ,frame2= detect_hand(frame)
-        #print(left_status, right_status)
         Clock.schedule_once(partial(self.play, left_status, 0))
         Clock.schedule_once(partial(self.play, right_status, 1))
 
@@ -92,9 +95,8 @@ class Camera(KivyCamera):
             color=random.choice(clr),
             icon=random.choice(
                 ["music-clef-treble", "music", "music-note"]),
-            pos_hint={"y": 0, "x": .45}
+            pos_hint={"y": 0, "x": .98}
         )
-        #print(self.parent.parent.ids)
         self.parent.parent.parent.ids.music.add_widget(icon)
 
 
@@ -105,9 +107,17 @@ class HomeScreen(Screen):
 
     def on_pre_enter(self, *args):
         Clock.schedule_once(self.add_camera, 1/1000)
-    
+        Clock.schedule_once(self.set_instrument, 1/1000)
 
     
+    def set_instrument(self, *args):
+        _list = ToggleButtonBehavior.get_widgets('x')
+        from utils.instrument import selected_instr
+        for each in _list:
+            if(each.text == selected_instr.capitalize()):
+                each.active = True
+            else:
+                each.active = False
 
     def add_camera(self, *args):
         source = 0  # "https://192.168.43.1:8080/video"
@@ -126,6 +136,7 @@ class HomeScreen(Screen):
             self.float_clr=[0.5,.5,.5,.3]
             self.mapping=False
             button.icon='tools'
+            self.ids.feed.children[0].music=Music()
             self.ids.float.remove_widget(self.ids.float.children[0])
         else:
             self.float_clr=[0.5,.5,.5,.0]
@@ -153,11 +164,11 @@ class AnimIcon(BoxLayout):
         anim = Animation(color=random.choice(clr),
                          font_size=70,
                          pos_hint={"x": random.randrange(
-                             25, 75, 5)/100, "y": .95},
-                         duration=3
+                             75, 100, 5)/100, "y": .95},
+                         duration=5
                          )
         anim.start(self)
-        Clock.schedule_once(partial(self.remove_wid, self), 3)
+        Clock.schedule_once(partial(self.remove_wid, self), 5)
 
     def remove_wid(self, inst, args):
         self.parent.remove_widget(inst)

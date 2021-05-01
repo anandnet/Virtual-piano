@@ -20,22 +20,23 @@ class Music():
         with open('utils/notes.json', 'r') as file:
             data = json.load(file)
         self.note_dict = {}
-        self.instr='piano'
-        self.note_dict[self.instr] = {}
-        #print(data[self.instr])
-        for each in data[self.instr]:
-            try:
-                self.note_dict[self.instr][each.split(".")[0]] = mixer.Sound("assets/tones/"+self.instr+"/"+each)
-            except Exception as e:
-                print(e)
+        for instr in data:
+            self.note_dict[instr] = {}
+            #print(data[instr])
+            for each in data[instr]:
+                try:
+                    self.note_dict[instr][each.split(".")[0]] = mixer.Sound("assets/tones/"+instr+"/"+each)
+                except Exception as e:
+                    print(e)
         #print(self.note_dict)
 
     def play(self, hand_index, index):
+        from utils.instrument import selected_instr
         tune = None
         channel_ = mixer.Channel(0)
         if(index != 6 and index != 7 and index != 0):
             try:
-                tune = self.note_dict[self.instr][self.current_map[self.instr][hand_index][str(index)]]
+                tune = self.note_dict[selected_instr][self.current_map[selected_instr][hand_index][str(index)]]
                 channel_ = mixer.Channel(
                     index-1) if hand_index == 0 else mixer.Channel(4+index)
             except:
