@@ -1,3 +1,4 @@
+from screens.collab import CollabWithFriends
 import cv2
 import random
 from functools import partial
@@ -67,6 +68,12 @@ Builder.load_string("""
                     root.add_mapping(self)
                 md_bg_color:1,0,1,1
                 pos:(10,20)
+            MDIconButton:
+                icon:"account-group"
+                on_release:
+                    root.collab(self)
+                md_bg_color:1,0,1,1
+                pos:(10,80)
 """)
 
 
@@ -103,6 +110,7 @@ class Camera(KivyCamera):
 
 class HomeScreen(Screen):
     mapping=False
+    _collab=False
     float_clr=[0.5,.5,.5,.3]
     cap = None
 
@@ -143,6 +151,20 @@ class HomeScreen(Screen):
             self.float_clr=[0.5,.5,.5,.0]
             button.icon='window-close'
             self.mapping=True
+            self.ids.float.add_widget(x)
+    
+    def collab(self,button):
+        x=CollabWithFriends()
+        if(self._collab):
+            self.float_clr=[0.5,.5,.5,.3]
+            self._collab=False
+            button.icon='account-group'
+            self.ids.feed.children[0].music=Music()
+            self.ids.float.remove_widget(self.ids.float.children[0])
+        else:
+            self.float_clr=[0.5,.5,.5,.0]
+            button.icon='window-close'
+            self._collab=True
             self.ids.float.add_widget(x)
             
         
