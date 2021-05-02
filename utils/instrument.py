@@ -1,1 +1,1 @@
-selected_instr = 'piano'
+selected_instr = 'drums'
