@@ -11,5 +11,5 @@
   * pygame
 
 # Run
-  * Go to project directory run in cmd/termial `pip3 install -r requirements.txt`
+  * Go to project directory run in cmd/terminal `pip3 install -r requirements.txt`
   * Now Run `python3 main.py`
